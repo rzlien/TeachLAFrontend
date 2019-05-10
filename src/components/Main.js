@@ -1,6 +1,7 @@
 import React from "react";
 import EditorContainer from "./Editor/containers/EditorContainer";
 import SketchesPageContainer from "./Sketches/containers/SketchesContainer";
+import ViewContainer from "./View/containers/ViewContainer";
 import { Motion, spring } from "react-motion";
 // Specify imports for codemirror usage
 import "../styles/Panel.css";
@@ -76,10 +77,18 @@ class Editor extends React.Component {
     />
   );
 
+  renderViewPage = value => (
+    <ViewContainer
+     viewParams={this.props.viewParams}
+    />
+  );
+
   renderContent = value => {
     switch (this.props.contentType) {
       case "sketches":
         return this.renderSketchesPage(value);
+      case "view":
+        return this.renderViewPage(value);
       case "editor":
       default:
         return this.renderEditor(value);

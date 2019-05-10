@@ -7,6 +7,7 @@ import CreateUserPage from "./containers/CreateUserContainer";
 import Error from "./Error";
 import firebase from "firebase";
 import "../styles/app.css";
+import ViewContainer from "./View/containers/ViewContainer";
 
 const provider = new firebase.auth.FacebookAuthProvider();
 
@@ -122,6 +123,17 @@ class App extends React.Component {
             render={() =>
               isValidUser ? <MainContainer contentType="sketches" /> : <Redirect to="/login" />
             }
+          />
+          {/*  */}
+          <Route 
+            path="/view/:sketchid"
+            render={(props) => {
+              let viewParams = {}
+              if (props && props.match && props.match.params) {
+                viewParams = props.match.params
+              }
+              return <MainContainer contentType="view" viewParams={viewParams} />
+            }}
           />
           {/* Default error page */}
           <Route
