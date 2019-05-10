@@ -22,25 +22,9 @@ class Sketches extends React.Component {
   }
 
   //==============React Lifecycle Functions Start===================//
-  componentWillMount() {
-    // if (this.props.screenWidth <= EDITOR_WIDTH_BREAKPOINT) {
-    //   this.setState({ viewMode: CODE_ONLY });
-    // }
-  }
+  componentWillMount() {}
 
-  componentDidUpdate(prevProps) {
-    // if (this.props.screenWidth !== prevProps.screenWidth) {
-    //   if (this.props.screenWidth <= EDITOR_WIDTH_BREAKPOINT) {
-    //     if (this.state.viewMode === CODE_AND_OUTPUT) {
-    //       this.setState({ viewMode: CODE_ONLY });
-    //     }
-    //   }
-    // }
-    // if (Math.abs(this.props.viewSize - this.originalWidth) >= (PANEL_SIZE - 10)) {
-    //   console.log(this.props.viewSize, this.originalWidth)
-    //   this.originalWidth = this.props.viewSize
-    // }
-  }
+  componentDidUpdate(prevProps) {}
 
   getRandomSketchThumbnail = () => {
     return SketchThumbnailArray[Math.floor(Math.random() * SketchThumbnailArray.length)];
@@ -86,7 +70,6 @@ class Sketches extends React.Component {
   renderSketches = () => {
     let newList = this.props.listOfPrograms.concat([]);
     let sketches = [];
-
     newList.sort((a, b) => {
       if (a.name < b.name) return -1;
       if (a.name === b.name) return 0;
@@ -106,18 +89,17 @@ class Sketches extends React.Component {
         >
           <img
             alt={"" + language + "-icon"}
-            src={`img/sketch-thumbnails/${this.getThumbnailSrc(thumbnail)}.svg`}
+            src={`${process.env.PUBLIC_URL}/img/sketch-thumbnails/${this.getThumbnailSrc(
+              thumbnail,
+            )}.svg`}
             className="sketch-thumbnail"
           />
           <span>{name}</span>
         </div>,
       );
     });
-    console.log(
-      this.props.viewSize,
-      Math.floor((this.props.viewSize - ROW_PADDING) / SKETCH_WIDTH),
-    );
-    let numSketchesPerRow = Math.floor((this.props.viewSize - ROW_PADDING) / SKETCH_WIDTH);
+
+    let numSketchesPerRow = Math.floor((this.props.calculatedWidth - ROW_PADDING) / SKETCH_WIDTH);
     // let numSketchesPerRow = (this.originalWidth - ROW_PADDING) / SKETCH_WIDTH
     let rows = [];
     let originalLength = sketches.length;
@@ -128,8 +110,6 @@ class Sketches extends React.Component {
         </div>,
       );
     }
-
-    //<div className="sketches-grid-row"></div>
 
     return <div className="sketches-grid">{rows}</div>;
   };
@@ -143,11 +123,11 @@ class Sketches extends React.Component {
 
   renderContent = () => {
     return (
-      <div>
+      <React.Fragment>
         {this.renderHeader()}
         {this.renderSketches()}
         {this.renderModal()}
-      </div>
+      </React.Fragment>
     );
   };
 
@@ -155,7 +135,18 @@ class Sketches extends React.Component {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
-    return <div style={this.props.codeStyle}>{this.renderContent()}</div>;
+
+    const containerStyle = {
+      left: this.props.left || 0,
+      width: this.props.calculatedWidth,
+      height: this.props.screenHeight,
+    };
+
+    return (
+      <div className="sketches" style={containerStyle}>
+        {this.renderContent()}
+      </div>
+    );
   }
 }
 
