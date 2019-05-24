@@ -131,3 +131,61 @@ export const createSketch = data => {
 
   return fetch(`${constants.SERVER_URL}/createProgram`, options);
 };
+
+/**---------getProgram--------
+ * fetches object from server containing information about program
+ * with sketchID
+ * returned json will be of the form
+ * {
+ *   ok:    boolean that's true if no error occured in the server
+ *   data:{
+ *    language: the language the code is written in
+ *    code: the code for the program 
+ *   }
+ * }
+ */
+export const getProgram = async (sketchID) => {
+  const getProgramEndpoint = (sketchID) =>
+    `${constants.SERVER_URL}/getProgram/${sketchID}`;
+
+  const options = {
+    method: "get",
+    mode: "cors", 
+  };
+
+  try {
+    let result = await fetch(getProgramEndpoint(sketchID), options);
+    let { ok, data, error } = await result.json();
+
+    return { ok, data, error };
+  } catch (err) {
+    return { ok: "false", error: "SERVER ERROR: Unable to get program data from server", err: err };
+  }
+};
+
+/**---------fork--------
+ * creates a copy of the sketch with sketchID for the user with uid requesting the fork
+ * returned json will be of the form
+ * {
+ *   ok:    boolean that's true if no error occured in the server
+ *   data:{}
+ * }
+ */
+// export const fork = async (uid, sketchID) => {
+//   const forkEndpoint = (uid, sketchID) => 
+//     `${constants.SERVER_URL}/fork/${uid}/${sketchID}`;
+
+//     const options = {
+//       method: "post",
+//       mode: "cors", 
+//     };
+
+//     try {
+//       let result = await fetch(forkEndpoint(forkEndpoint(uid, sketchID)), options);
+//       let {ok, data, error } = await result.json();
+
+//       return {ok, data, error};
+//     }catch(err){
+//       return { ok: "false", error: "SERVER ERROR: Unable to fork program", err: err };
+//     }
+// }

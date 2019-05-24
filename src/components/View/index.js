@@ -3,8 +3,8 @@ import SplitPane from "react-split-pane";
 import OutputContainer from "./containers/OutputContainer.js";
 import TextViewContainer from "./containers/TextViewContainer";
 import OpenPanelButtonContainer from "../common/containers/OpenPanelButtonContainer";
-import EditorButton from "./components/EditorButton";
 import * as fetch from "../../lib/fetch.js";
+import LoadingPage from "../common/LoadingPage";
 import EditorRadio from "./components/EditorRadio.js";
 import { EDITOR_WIDTH_BREAKPOINT, CODE_AND_OUTPUT, CODE_ONLY, OUTPUT_ONLY } from "./constants";
 
@@ -37,6 +37,8 @@ class View extends React.Component {
     if (this.props.screenWidth <= EDITOR_WIDTH_BREAKPOINT) {
       this.setState({ viewMode: CODE_ONLY });
     }
+
+    this.props.getProgram(this.props.viewParams.sketchID);
     
     this.setState({ loadingSketch: false });
   }
@@ -131,7 +133,12 @@ class View extends React.Component {
   };
 
   render() {
-    return <div style={this.props.codeStyle}>{this.renderContent()}</div>;
+    if (this.state.loadingSketch) {
+      return <LoadingPage />;
+    }
+    else {
+      return <div style={this.props.codeStyle}>{this.renderContent()}</div>;
+    }
   }
 }
 

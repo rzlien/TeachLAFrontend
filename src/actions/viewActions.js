@@ -1,4 +1,4 @@
-export const GET_PROGRAM = "GET_PROGRAM";
-export function getProgram(sketchid) {
-    return { type: GET_PROGRAM, sketchid: sketchid }
+export const LOAD_PROGRAM = "LOAD_PROGRAM";
+export function loadProgram(data) {
+    return { type: LOAD_PROGRAM, data: data }
 }

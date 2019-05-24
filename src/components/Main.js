@@ -37,8 +37,8 @@ class Editor extends React.Component {
 
   renderEditor = () => <EditorContainer />;
 
-  renderViewPage = value => (
-    <ViewContainer
+  renderViewPage = () => (
+  <ViewContainer
      viewParams={this.props.viewParams}
     />
   );
