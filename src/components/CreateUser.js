@@ -17,7 +17,7 @@ class CreateUser extends React.Component {
     return (
       <div className="login-page">
         <div className="login-page-content" style={{ backgroundImage: `url(${LoginGuy})` }}>
-          <CreateUserForm />
+          <CreateUserForm setDisplayName={this.props.setDisplayName} />
         </div>
         <Footer />
       </div>

@@ -7,3 +7,7 @@
   /*needed for the modal's button to stay within the window*/
   box-sizing: border-box;
 }
+
+.text-underline {
+  text-decoration: underline;
+}

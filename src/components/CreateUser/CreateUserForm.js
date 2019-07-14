@@ -5,6 +5,8 @@ import firebase from "firebase";
 import SHA256 from "crypto-js/sha256";
 import LoginInput from "../Login/LoginInput.js";
 import {
+  MINIMUM_DISPLAY_NAME_LENGTH,
+  MAXIMUM_DISPLAY_NAME_LENGTH,
   MINIMUM_USERNAME_LENGTH,
   MINIMUM_PASSWORD_LENGTH,
   MAXIMUM_USERNAME_LENGTH,
@@ -25,10 +27,12 @@ export default class CreateUserForm extends React.Component {
       username: "",
       password: "",
       confirmPassword: "",
+      displayName: "",
       errorMessage: "",
       waiting: false,
       usernameMessage: "",
       passwordMessage: "",
+      displayNameMessage: "",
     };
   }
 
@@ -39,6 +43,8 @@ export default class CreateUserForm extends React.Component {
    *    -Username characters: only alphanumeric characters, plus !@#$%
    *    -Password length: as defined in constants file
    *    -Password characters: only alphanumeric characters, plus !@#$%
+   *    -Display Name length: as defined in constants file
+   *    -Display Name characters: only alphanumeric characters, plus !@#$%
    * @return {boolean} - false when bad inputs given
    */
   checkInputs = () => {
@@ -84,6 +90,20 @@ export default class CreateUserForm extends React.Component {
       this.setState({ passwordMessage: "" });
     }
 
+    const name = this.state.displayName;
+    if (name.length < MINIMUM_DISPLAY_NAME_LENGTH || name.length > MAXIMUM_DISPLAY_NAME_LENGTH) {
+      this.setState({
+        displayNameMessage: `Display name must be between ${MINIMUM_DISPLAY_NAME_LENGTH}-${MAXIMUM_DISPLAY_NAME_LENGTH} characters long`,
+      });
+      badInputs = false;
+    } else if (name.match(/[^a-zA-Z0-9!@#$% ]/)) {
+      this.setState({
+        displayNameMessage:
+          "Only use upper case, lower case, numbers, spaces, and/or the following special characters !@#$%",
+      });
+      badInputs = false;
+    }
+
     return badInputs;
   };
 
@@ -123,7 +143,9 @@ export default class CreateUserForm extends React.Component {
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, passHash)
-      .then(({ user }) => {})
+      .then(({ user }) => {
+        this.props.setDisplayName(this.state.displayName);
+      })
       .catch(error => {
         console.log(error);
         let newErr = error.message || "";
@@ -148,6 +170,7 @@ export default class CreateUserForm extends React.Component {
   updateUsername = username => this.setState({ username });
   updatePassword = password => this.setState({ password });
   updateConfirmPassword = confirmPassword => this.setState({ confirmPassword });
+  updateDisplayName = displayName => this.setState({ displayName });
 
   renderInputs = () => (
     <div className="login-form-input-list">
@@ -170,8 +193,15 @@ export default class CreateUserForm extends React.Component {
           waiting={this.state.waiting}
           onChange={this.updateConfirmPassword}
         />
+        <LoginInput
+          type={"Display Name"}
+          data={this.state.displayName}
+          waiting={this.state.waiting}
+          onChange={this.updateDisplayName}
+        />
         {this.renderErrorMessage(this.state.usernameMessage)}
         {this.renderErrorMessage(this.state.passwordMessage)}
+        {this.renderErrorMessage(this.state.displayNameMessage)}
         {this.renderErrorMessage(this.state.errorMessage, true)}
       </div>
     </div>
@@ -197,7 +227,7 @@ export default class CreateUserForm extends React.Component {
 
   renderLink = () => (
     <Link to="/login" className="login-form-link">
-      Already have an account? Click here to login.
+      Already have an account? <span className="text-underline">Click here to login.</span>
     </Link>
   );
 

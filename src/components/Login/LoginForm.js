@@ -145,7 +145,7 @@ export default class LoginModal extends React.Component {
           <br />
           <br />
           <Link to="/createUser" className="login-form-link">
-            Don't have an account? Create one now!
+            Don't have an account? <span className="text-underline">Create one now!</span>
           </Link>
         </form>
       </div>

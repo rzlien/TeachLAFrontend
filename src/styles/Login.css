@@ -63,7 +63,7 @@
 
 .login-form-input-header {
   color: #dddcdf;
-  font-size: 36px;
+  font-size: 24px;
   margin-bottom: 1rem;
 }
 
@@ -143,14 +143,14 @@
 }
 
 .login-form-link {
-  color: #2d7799;
+  color: white;
   text-decoration: none;
   font-size: 1.2rem;
 }
 
 .login-form-link:hover {
-  color: #2d7799;
-  text-decoration: underline;
+  color: white;
+  text-decoration: none;
 }
 
 .force-no-wrap {
