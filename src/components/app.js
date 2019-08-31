@@ -154,6 +154,12 @@ class App extends React.Component {
                 )
               }
             />
+            <Route
+              path="/classes"
+              render={() =>
+                isValidUser ? <MainContainer contentType="classes" /> : <Redirect to="/login" />
+              }
+            />
             {/* Default error page */}
             <Route
               path="/error"

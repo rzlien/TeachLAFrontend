@@ -5,6 +5,7 @@ import TextEditorContainer from "./TextEditor/containers/TextEditorContainer.js"
 import DropdownButtonContainer from "./common/containers/DropdownButtonContainer";
 import * as fetch from "../lib/fetch.js";
 import * as cookies from "../lib/cookies.js";
+import ClassesPageContainer from "./Classes/containers/ClassesContainer";
 import SketchesPageContainer from "./Sketches/containers/SketchesContainer";
 import "styles/Main.scss";
 import ProfilePanelContainer from "./common/containers/ProfilePanelContainer";
@@ -92,10 +93,14 @@ class Main extends React.Component {
 
   renderDropdown = () => <DropdownButtonContainer />;
 
+  renderClassesPage = () => <ClassesPageContainer />;
+
   renderSketchesPage = () => <SketchesPageContainer />;
 
   renderContent = () => {
     switch (this.props.contentType) {
+      case "classes":
+        return this.renderClassesPage();
       case "sketches":
         return this.renderSketchesPage();
       case "editor":

@@ -223,6 +223,21 @@ class ProfilePanel extends React.Component {
     </Link>
   );
 
+  renderClassesButton = () => (
+    <Button
+      className="panel-button"
+      key="classes-button"
+      size="lg"
+      block
+      onClick={() => {
+        this.setState({ redirectTo: "/classes" });
+      }}
+    >
+      <FontAwesomeIcon icon={faBook} />
+      <span className="panel-button-text">Classes</span>
+    </Button>
+  );
+
   renderSketchesButton = () => (
     <Link
       to={{ pathname: "/sketches" }}
@@ -252,11 +267,17 @@ class ProfilePanel extends React.Component {
   renderButtons = () => {
     let panelButtons = [];
     switch (this.props.contentType) {
+      case "classes":
+        panelButtons.push(this.renderEditorButton());
+        panelButtons.push(this.renderSketchesButton());
+        break;
       case "sketches":
         panelButtons.push(this.renderEditorButton());
+        panelButtons.push(this.renderClassesButton());
         break;
       case "editor":
         panelButtons.push(this.renderSketchesButton());
+        panelButtons.push(this.renderClassesButton());
         break;
       default:
         break;
