@@ -1,16 +1,20 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
-import SketchesButton from "./components/SketchesButton";
 import SketchBox from "./components/SketchBox";
 import ConfirmDeleteModalContainer from "./containers/ConfirmDeleteModalContainer";
 import CreateSketchModalContainer from "./containers/CreateSketchModalContainer";
 import EditSketchModalContainer from "./containers/EditSketchModalContainer";
 import OpenPanelButtonContainer from "../common/containers/OpenPanelButtonContainer";
 import { SketchThumbnailArray } from "./constants";
+import ProcessingConstructor from "../Editor/components/Output/Processing";
 // import { PANEL_SIZE } from "../../constants";
 import "../../styles/Sketches.css";
 
+import { Button } from "reactstrap";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCogs } from "@fortawesome/free-solid-svg-icons";
+import { faFile } from "@fortawesome/free-solid-svg-icons";
 import { faPython } from "@fortawesome/free-brands-svg-icons";
 import { faHtml5 } from "@fortawesome/free-brands-svg-icons";
 
@@ -34,6 +38,33 @@ class Sketches extends React.Component {
 
   getRandomSketchThumbnail = () => {
     return SketchThumbnailArray[Math.floor(Math.random() * SketchThumbnailArray.length)];
+  };
+
+  downloadSketchCode = (name, language, code) => {
+    let extension = ".";
+    switch (language) {
+      case "python":
+        extension += "py";
+        break;
+      case "processing": // this is because we construct the processing result as an HTML file. jank.
+      case "html":
+        extension += "html";
+        break;
+      default:
+        extension += "txt";
+    }
+    // taken from this: https://stackoverflow.com/questions/44656610/download-a-string-as-txt-file-in-react
+    const element = document.createElement("a");
+    let file;
+    if (language === "processing") {
+      file = new Blob([ProcessingConstructor(code, true)], { type: "text/plain" });
+    } else {
+      file = new Blob([code], { type: "text/plain" });
+    }
+    element.href = URL.createObjectURL(file);
+    element.download = name + extension;
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
   };
 
   setCreateSketchModalOpen = val => {
@@ -63,13 +94,14 @@ class Sketches extends React.Component {
     <div className="sketches-header">
       <OpenPanelButtonContainer />
       <div className="sketches-header-text">Sketches</div>
-      <div style={{ marginLeft: "auto" }}>
-        <SketchesButton
-          handleClick={() => this.setCreateSketchModalOpen(true)}
-          text={"Create Sketch"}
-          width={"200px"}
-        />
-      </div>
+      <Button
+        className="ml-auto mr-2"
+        color="success"
+        size="lg"
+        onClick={() => this.setCreateSketchModalOpen(true)}
+      >
+        <FontAwesomeIcon icon={faFile} /> Create Sketch
+      </Button>
     </div>
   );
 
@@ -82,6 +114,21 @@ class Sketches extends React.Component {
 
   renderSketches = () => {
     let newList = this.props.programs.concat([]);
+    if (newList.size === 0) {
+      return (
+        <div>
+          <div className="no-sketches-container">
+            <h2>There's nothing here! Why don't you try creating a sketch?</h2>
+            <br />
+            <p>
+              <Button color="success" size="lg" onClick={() => this.setCreateSketchModalOpen(true)}>
+                Create A Sketch
+              </Button>
+            </p>
+          </div>
+        </div>
+      );
+    }
     let sketches = [];
     newList.sort((a, b) => {
       if (a.name < b.name) return -1;
@@ -89,8 +136,7 @@ class Sketches extends React.Component {
       // if (a.name > b.name) return 1;
       else return 1;
     });
-
-    newList.forEach(({ key, name, language, thumbnail }) => {
+    newList.forEach(({ key, name, language, thumbnail, code }) => {
       let faLanguage;
       let languageDisplay; // not a great way to do this!
       switch (language) {
@@ -115,6 +161,9 @@ class Sketches extends React.Component {
           key={key}
           deleteFunc={() => {
             this.setConfirmDeleteModalOpen(true, name, key);
+          }}
+          downloadFunc={() => {
+            this.downloadSketchCode(name, language, code);
           }}
           editFunc={() => {
             this.setEditSketchModalOpen(

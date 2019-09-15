@@ -1,5 +1,6 @@
 import React from "react";
 import SHA256 from "crypto-js/sha256";
+import { Button } from "reactstrap";
 import { RingLoader } from "react-spinners";
 import { EMAIL_DOMAIN_NAME } from "../../constants";
 import { Link } from "react-router-dom";
@@ -40,20 +41,40 @@ export default class LoginModal extends React.Component {
         .signInWithEmailAndPassword(email, passwordHash)
         .then(() => {})
         .catch(err => {
-          console.log(err);
+          console.error(err);
           let newMsg = err.message;
           switch (err.code) {
+            case "auth/invalid-email":
+              newMsg =
+                "Invalid username. Usernames must only have alphanumeric characters plus !@#$%.";
+              break;
             case "auth/user-not-found":
-              newMsg = "No account found for username";
+              newMsg = "No account found for username.";
               break;
             case "auth/wrong-password":
-              newMsg = "Invalid password provided";
+              newMsg = "Invalid password provided.";
               break;
             case "auth/network-request-failed":
-              newMsg = "Login request failed. Please try again later...";
+              newMsg = "Network error - check your internet connection.";
+              break;
+            case "auth/app-deleted":
+            case "auth/app-not-authorized":
+            case "auth/argument-error":
+            case "auth/invalid-api-key":
+            case "auth/operation-not-allowed":
+            case "auth/requires-recent-login":
+            case "auth/unauthorized-domain":
+              newMsg =
+                "App was not properly configured. Please contact administrator. Error: " + err.code;
+              break;
+            case "auth/invalid-user-token":
+            case "auth/user-disabled":
+            case "auth/user-token-expired":
+            case "auth/web-storage-unsupported":
+              newMsg = "Issue with user. Please contact administrator. Error: " + err.code;
               break;
             default:
-              newMsg = "Failed to sign in";
+              newMsg = "Failed to sign in: " + err.code;
           }
           this.setState({ errorMsg: newMsg, waiting: false });
         });
@@ -125,9 +146,9 @@ export default class LoginModal extends React.Component {
         />
       */
       return (
-        <button className="login-form-button" type="submit">
+        <Button className="login-form-button" size="lg" type="submit">
           Login
-        </button>
+        </Button>
       );
     }
   };
@@ -136,9 +157,9 @@ export default class LoginModal extends React.Component {
     return (
       <div className="login-form-container">
         <form className="login-form" onSubmit={this.handleEmailLogin}>
-          <div className="login-header">
+          <h1>
             Welcome to <span className="force-no-wrap">&lt;Teach LA&gt;</span>
-          </div>
+          </h1>
           <br />
           {this.renderInputs()}
           {this.renderAction()}
@@ -147,6 +168,15 @@ export default class LoginModal extends React.Component {
           <Link to="/createUser" className="login-form-link">
             Don't have an account? <span className="text-underline">Create one now!</span>
           </Link>
+          <br />
+          <br />
+          <details>
+            <summary>Forgot your password?</summary>
+            <p>
+              Send us an email at <a href="mailto:acmteachla@gmail.com">acmteachla@gmail.com</a>{" "}
+              with "Forgot Password" in the subject, and we'll do our best to help you out!
+            </p>
+          </details>
         </form>
       </div>
     );
