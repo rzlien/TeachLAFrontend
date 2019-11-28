@@ -22,6 +22,7 @@ deploy:
   skip_cleanup: true
   github_token: $github_token
   local_dir: build
+  target_branch: gh-pages
   on:
     branch: legacy-gh-pages
 
